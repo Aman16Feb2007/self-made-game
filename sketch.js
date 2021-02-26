@@ -1,41 +1,40 @@
 var canvas;
 var gameState = 0;
-var c1, c2, c3, c4;
 var rat, cheese; 
-var gameState = "level1";
-var Score = 10;
+var gameState = "home";
+var Score = 0;
 var play, story, control;
 var W1, W2, W3, W4, W5, W6, W7, W8, W9, W10, W11, W12, W13, W14, W15, W16, W17, W18;
 var W19, W20, W25, W26, W27, W28, W29, W30, W31, W32, W33, W34, W35, W36;
-var cat1, cat2, cat3, cat4;
-var fruit1, fruit2, fruit3, fruit4, fruit5, fruit6, fruit7, fruit8, fruit9, fruit10;
-var life1, life2, life3;
-var life = [];
+var cat1, cat2;
+var fruit1, fruit2, fruit3, fruit4, fruit5, fruit6, fruit7, fruit8;
+var gameOver;
+var scoreI;
+var playButton, storyButton, controlButton, homeButton;
+
 
 function preload(){
     cheeseImg = loadImage("images/cheese.png");
     ratImg = loadImage("images/rat.png");
     ratHappyImg = loadImage("images/ratHappy.png");
+    ScoreImg = loadImage("images/score.png");
     rat1Img = loadImage("images/rat1.png");
     catImg = loadImage("images/cat.png");
     tomImg = loadImage("images/tom.png");
-    lifeImg = loadImage("images/life.png");
+    gameOverImg = loadImage("images/game-over.png");
     fruit1Img = loadImage("images/fruit1.png");
     fruit2Img = loadImage("images/fruit2.png");
     fruit3Img = loadImage("images/fruit3.png");
     fruit4Img = loadImage("images/fruit4.png");
     fruit5Img = loadImage("images/fruit5.png");
     ratManImg = loadImage("images/ratMan.png");
-    warningImg = loadImage("images/warning.png");
     mazeImg = loadImage("images/maze.jpg");
-    //catAni = loadAnimation("images/1.png", "images/2.png", "images/3.png", "images/4.png", "images/5.png");
     backImg = loadImage("images/background.jpg");
     back1Img = loadImage("images/background1.jpg")
     playImg = loadImage("images/play.png");
     storyImg = loadImage("images/story.png");
     controlImg = loadImage("images/controls.png");
     homeImg = loadImage("images/homeButton.png");
-    //catSd = loadSound("Sound.mp3");
 }
 
 function setup(){
@@ -58,6 +57,10 @@ function setup(){
     homeButton = createSprite(width/2-50, 100, 50, 50);
     homeButton.addImage(homeImg);
     homeButton.scale = 0.3;
+
+    scoreI = createSprite(-770+width/2, -355+height/2, 50, 50);
+    scoreI.addImage(ScoreImg);
+    scoreI.scale = 0.5;
 
     ratMan = createSprite(width/2, -250+height/2, 50, 50);
     ratMan.addImage(ratManImg);
@@ -98,6 +101,8 @@ function setup(){
     fruit8.addImage(fruit3Img);
     fruit8.scale = 0.18;
 
+    gameOver = createSprite(width/2, height/2, 50, 50);
+    gameOver.addImage(gameOverImg);
 
     rat = createSprite(width/2, height/2, 50, 50);
     rat.addImage(ratImg);
@@ -112,28 +117,6 @@ function setup(){
     cat2.addImage(catImg);
     cat2.scale = 0.3;
     cat2.velocityX = -4;
-
-    life1 = createSprite(820+width/2, 350+height/2);
-    life1.addImage(lifeImg);
-    life1.scale = 0.1
-
-    life2 = createSprite(760+width/2, 350+height/2);
-    life2.addImage(lifeImg);
-    life2.scale = 0.1
-
-    life3 = createSprite(700+width/2, 350+height/2);
-    life3.addImage(lifeImg);
-    life3.scale = 0.1
-
-    life = [life1, life2, life3];
-
-    /*cat3 = createSprite(width/2, 140, 50, 50);
-    cat3.addImage(catImg);
-    cat3.scale = 0.3;
-
-    cat4 = createSprite(width/2, 140, 50, 50);
-    cat4.addImage(catImg);
-    cat4.scale = 0.3;*/
 
     W1 = createSprite(65+width/2, -315+height/2, 1210, 32);
     W2 = createSprite(-65+width/2, 344+height/2, 1210, 32);
@@ -250,13 +233,12 @@ function draw(){
         storyButton.visible=true;
         controlButton.visible=true;
         homeButton.visible=false;
-        life1.visible = false;
-        life2.visible = false;
-        life3.visible = false;
         rat.visible = false;
         cat1.visible = false;
         cat2.visible = false;
         ratMan.visible = true;
+        scoreI.visible = false;
+        gameOver.visible = false;
         back1.visible = false;
         fruit1.visible = false;
         fruit2.visible = false;
@@ -290,11 +272,10 @@ function draw(){
     playButton.visible=false;
     controlButton.visible=false;
     homeButton.visible=true;
-    life1.visible = false;
-    life2.visible = false;
-    life3.visible = false;
     rat.visible = false;
     ratMan.visible = false;
+    scoreI.visible = false;
+    gameOver.visible = false;
     back1.visible = false;
     fruit1.visible = false;
     fruit2.visible = false;
@@ -344,12 +325,10 @@ function draw(){
     homeButton.visible=true;
     cat1.visible = true;
     cat2.visible = true;
-    life1.visible = true;
-    life2.visible = true;
-    life3.visible = true;
     rat.visible = true;
     ratMan.visible = false;
     back1.visible = true;
+    scoreI.visible = true;
     fruit1.visible = true;
     fruit2.visible = true;
     fruit3.visible = true;
@@ -368,16 +347,12 @@ function draw(){
     if(rat.isTouching(WG)){
             rat.x = width/2;
             rat.y = height/2;
-            life1.destroy();
-            life2.destroy();
-            life3.destroy();
-            life.pop();
     }
 
     
     fill("red");
     textSize(40);
-    text("Score : " + Score, -820+width/2, -345+height/2);
+    text("Score  : " + Score, -820+width/2, -345+height/2);
 
     if(rat.isTouching(fruit1)){
         Score = Score+2;
@@ -471,7 +446,6 @@ function draw(){
         rat.y = height/2;
         cat1.addImage(tomImg);
     }
-
     
 
     /*else{
